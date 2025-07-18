@@ -89,6 +89,50 @@ $app->post('/assign', function (Request $request, Response $response) {
         return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
     }
 
+    // Check for existing assignment
+    $checkStmt = $pdo->prepare("SELECT 1 FROM staff_shifts WHERE staff_id = :staff_id AND shift_id = :shift_id");
+    $checkStmt->execute([
+        ':staff_id' => $data['staff_id'],
+        ':shift_id' => $data['shift_id']
+    ]);
+
+    if ($checkStmt->fetch()) {
+        $response->getBody()->write(json_encode([
+            'error' => 'Staff member is already assigned to this shift.'
+        ]));
+        return $response->withStatus(409)->withHeader('Content-Type', 'application/json');
+    }
+
+
+    // Fetch staff role
+    $staffStmt = $pdo->prepare("SELECT role FROM staff WHERE id = :staff_id");
+    $staffStmt->execute([':staff_id' => $data['staff_id']]);
+    $staff = $staffStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Fetch shift required role
+    $shiftStmt = $pdo->prepare("SELECT role_required FROM shifts WHERE id = :shift_id");
+    $shiftStmt->execute([':shift_id' => $data['shift_id']]);
+    $shift = $shiftStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Check existence of both records
+    if (!$staff || !$shift) {
+        $response->getBody()->write(json_encode([
+            'error' => 'Invalid staff or shift ID'
+        ]));
+        return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
+    }
+
+    // Role validation
+    if ($staff['role'] !== $shift['role_required']) {
+        $response->getBody()->write(json_encode([
+            'error' => 'Staff role does not match the required role for this shift',
+            'staff_role' => $staff['role'],
+            'required_role' => $shift['role_required']
+        ]));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+    }
+
+    // Insert assignment
     $stmt = $pdo->prepare("INSERT INTO staff_shifts (staff_id, shift_id) VALUES (:staff_id, :shift_id)");
     $stmt->execute([
         ':staff_id' => $data['staff_id'],
@@ -99,6 +143,32 @@ $app->post('/assign', function (Request $request, Response $response) {
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+
+$app->get('/assignments', function (Request $request, Response $response) {
+    $pdo = getConnection();
+
+    $stmt = $pdo->query("
+        SELECT 
+            sa.id AS assignment_id,
+            s.id AS staff_id,
+            s.name AS staff_name,
+            s.role AS staff_role,
+            sh.id AS shift_id,
+            sh.day,
+            sh.start_time,
+            sh.end_time,
+            sh.role_required
+        FROM staff_shifts sa
+        JOIN staff s ON sa.staff_id = s.id
+        JOIN shifts sh ON sa.shift_id = sh.id
+        ORDER BY sh.day, sh.start_time
+    ");
+
+    $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $response->getBody()->write(json_encode($assignments));
+    return $response->withHeader('Content-Type', 'application/json');
+});
 
 
 $app->run();
