@@ -25,3 +25,5 @@ services:
       - ./backend:/app
     depends_on:
       - db
+    env_file:
+      - .env
