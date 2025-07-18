@@ -53,6 +53,29 @@ $app->get('/shifts', function (Request $request, Response $response) {
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->post('/shifts', function (Request $request, Response $response) {
+    $pdo = getConnection();
+    $data = $request->getParsedBody();
+
+    if (!isset($data['day'], $data['start_time'], $data['end_time'], $data['role_required'])) {
+        $response->getBody()->write(json_encode([
+            'error' => 'Missing required fields',
+            'required' => ['day', 'start_time', 'end_time', 'role_required']
+        ]));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO shifts (day, start_time, end_time, role_required) VALUES (:day, :start_time, :end_time, :role_required)");
+    $stmt->execute([
+        ':day' => $data['day'],
+        ':start_time' => $data['start_time'],
+        ':end_time' => $data['end_time'],
+        ':role_required' => $data['role_required'],
+    ]);
+
+    $response->getBody()->write(json_encode(['message' => 'Shift created successfully']));
+    return $response->withHeader('Content-Type', 'application/json');
+});
 
 
 $app->run();
