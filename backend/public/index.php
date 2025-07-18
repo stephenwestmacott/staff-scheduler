@@ -77,5 +77,28 @@ $app->post('/shifts', function (Request $request, Response $response) {
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->post('/assign', function (Request $request, Response $response) {
+    $pdo = getConnection();
+    $data = $request->getParsedBody();
+
+    if (!isset($data['staff_id'], $data['shift_id'])) {
+        $response->getBody()->write(json_encode([
+            'error' => 'Missing required fields',
+            'required' => ['staff_id', 'shift_id']
+        ]));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO staff_shifts (staff_id, shift_id) VALUES (:staff_id, :shift_id)");
+    $stmt->execute([
+        ':staff_id' => $data['staff_id'],
+        ':shift_id' => $data['shift_id'],
+    ]);
+
+    $response->getBody()->write(json_encode(['message' => 'Shift assigned to staff member successfully']));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+
 
 $app->run();
