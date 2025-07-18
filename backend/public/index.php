@@ -44,5 +44,15 @@ $app->post('/staff', function (Request $request, Response $response) {
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/shifts', function (Request $request, Response $response) {
+    $pdo = getConnection();
+    $stmt = $pdo->query("SELECT * FROM shifts");
+    $shifts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $response->getBody()->write(json_encode($shifts));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+
 
 $app->run();
