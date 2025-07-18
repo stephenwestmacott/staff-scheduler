@@ -1,0 +1,12 @@
+FROM php:8.2-cli
+
+WORKDIR /app
+
+RUN docker-php-ext-install pdo pdo_mysql
+
+COPY . /app
+
+RUN curl -sS https://getcomposer.org/installer | php && \
+    php composer.phar install
+
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
