@@ -21,6 +21,12 @@ $app->add(function ($request, $handler) {
 // Middleware to parse JSON body
 $app->addBodyParsingMiddleware();
 
+// Handle preflight OPTIONS requests for CORS
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+    return $response;
+});
+
+// Endpoints
 $app->get('/staff', function (Request $request, Response $response) {
     $pdo = getConnection();
     $stmt = $pdo->query("SELECT * FROM staff");
@@ -38,6 +44,23 @@ $app->post('/staff', function (Request $request, Response $response) {
         $response->getBody()->write(json_encode([
             'error' => 'Missing required fields',
             'required' => ['name', 'role', 'phone']
+        ]));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+    }
+
+    // Validate role
+    $validRoles = ['Cook', 'Server', 'Manager'];
+    if (!in_array($data['role'], $validRoles)) {
+        $response->getBody()->write(json_encode([
+            'error' => 'Invalid role. Must be one of: ' . implode(', ', $validRoles)
+        ]));
+        return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+    }
+
+    // Validate phone format (306-555-1234)
+    if (!preg_match('/^\d{3}-\d{3}-\d{4}$/', $data['phone'])) {
+        $response->getBody()->write(json_encode([
+            'error' => 'Invalid phone format. Must be in format 306-555-1234'
         ]));
         return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
     }

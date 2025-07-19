@@ -26,9 +26,9 @@ CREATE TABLE IF NOT EXISTS staff_shifts (
 
 -- Insert sample staff
 INSERT INTO staff (name, role, phone) VALUES
-('Alice Smith', 'server', '555-1234'),
-('Bob Johnson', 'cook', '555-5678'),
-('Carol Lee', 'manager', '555-9012');
+('Alice Smith', 'server', '306-555-1234'),
+('Bob Johnson', 'cook', '306-555-5678'),
+('Carol Lee', 'manager', '306-555-9012');
 
 -- Insert sample shifts
 INSERT INTO shifts (day, start_time, end_time, role_required) VALUES

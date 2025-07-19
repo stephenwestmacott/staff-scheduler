@@ -1,14 +1,10 @@
-import { useState } from 'react'
-import EmployeeList from './components/EmployeeList'
+import StaffTable from './components/StaffList'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <div>
-        <h1>Staff Scheduler</h1>
-        <EmployeeList />
+        <StaffTable />
       </div>
     </>
   )
