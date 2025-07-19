@@ -22,7 +22,7 @@ A full-stack web application for managing staff members, shifts, and assignments
 
 ### Frontend
 
-- **React 18** with Vite
+- **React 19** with Vite
 - **Material-UI (MUI)** components
 - **Axios** for HTTP requests
 - **Grid v2** responsive layout
@@ -98,7 +98,7 @@ staff-scheduler/
 ### Prerequisites
 
 - Docker and Docker Compose
-- Node.js 18+ (for local development)
+- Node.js 20+ (for local development)
 - PHP 8.2+ (for local development)
 
 ### Quick Start with Docker
