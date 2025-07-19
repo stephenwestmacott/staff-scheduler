@@ -5,16 +5,36 @@ import {
 } from '@mui/material';
 import axios from '../api/axios';
 
+/**
+ * ShiftScheduler Component
+ * 
+ * Manages shift creation and staff assignment functionality.
+ * Provides interfaces for:
+ * - Creating new shifts with day, time, and role requirements
+ * - Assigning staff members to shifts with role validation
+ * - Viewing all shifts and current assignments
+ * 
+ * Features:
+ * - Automatic day name to date conversion
+ * - Role case conversion for API compatibility
+ * - Real-time validation and user feedback
+ * - Responsive Material-UI design
+ */
+
 const ShiftScheduler = () => {
+  // State management for data and UI
   const [shifts, setShifts] = useState([]);
   const [staff, setStaff] = useState([]);
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  
+  // Form visibility state
   const [showShiftForm, setShowShiftForm] = useState(false);
   const [showAssignForm, setShowAssignForm] = useState(false);
   
+  // Form data state
   const [shiftFormData, setShiftFormData] = useState({
     day: '',
     start_time: '',
@@ -27,10 +47,17 @@ const ShiftScheduler = () => {
     shift_id: ''
   });
 
+  // Constants for validation and form options
   const validRoles = ['Cook', 'Server', 'Manager'];
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  // Helper function to convert day name to date
+  /**
+   * Converts a day name (e.g., "Monday") to the next occurrence of that day in YYYY-MM-DD format
+   * This ensures API compatibility which expects date strings rather than day names
+   * 
+   * @param {string} dayName - Name of the day (Monday, Tuesday, etc.)
+   * @returns {string} Date in YYYY-MM-DD format
+   */
   const convertDayToDate = (dayName) => {
     const today = new Date();
     const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
@@ -44,6 +71,10 @@ const ShiftScheduler = () => {
     return targetDate.toISOString().split('T')[0]; // Return YYYY-MM-DD format
   };
 
+  /**
+   * Fetches all data from the API (shifts, staff, assignments)
+   * Updates state with the retrieved data and handles errors gracefully
+   */
   const fetchData = () => {
     setLoading(true);
     Promise.all([
@@ -65,19 +96,27 @@ const ShiftScheduler = () => {
     });
   };
 
+  // Load data on component mount
   useEffect(() => {
     fetchData();
   }, []);
+
+  /**
+   * Handles shift creation form submission
+   * Transforms form data for API compatibility and validates input
+   * 
+   * @param {Event} e - Form submission event
+   */
 
   const handleShiftSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     
-    // Convert day name to date and role to lowercase
+    // Transform form data for API compatibility
     const formattedData = {
       ...shiftFormData,
-      day: convertDayToDate(shiftFormData.day),
-      role_required: shiftFormData.role_required.toLowerCase()
+      day: convertDayToDate(shiftFormData.day), // Convert day name to date
+      role_required: shiftFormData.role_required.toLowerCase() // Convert to lowercase
     };
     
     console.log('Sending shift data:', formattedData);
@@ -87,7 +126,7 @@ const ShiftScheduler = () => {
         setSuccess('Shift created successfully!');
         setShiftFormData({ day: '', start_time: '', end_time: '', role_required: '' });
         setShowShiftForm(false);
-        fetchData();
+        fetchData(); // Refresh data
       })
       .catch(err => {
         console.error('Shift creation error:', err);
@@ -99,6 +138,12 @@ const ShiftScheduler = () => {
       });
   };
 
+  /**
+   * Handles staff assignment form submission
+   * Assigns a staff member to a selected shift with backend validation
+   * 
+   * @param {Event} e - Form submission event
+   */
   const handleAssignSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -108,7 +153,7 @@ const ShiftScheduler = () => {
         setSuccess('Staff assigned to shift successfully!');
         setAssignFormData({ staff_id: '', shift_id: '' });
         setShowAssignForm(false);
-        fetchData();
+        fetchData(); // Refresh data
       })
       .catch(err => {
         setError('Failed to assign staff: ' + (err.response?.data?.error || err.message));
@@ -118,6 +163,9 @@ const ShiftScheduler = () => {
       });
   };
 
+  /**
+   * Clears success and error messages
+   */
   const clearMessages = () => {
     setError('');
     setSuccess('');
