@@ -23,8 +23,25 @@ $app = AppFactory::create();
 // CORS Middleware - Allow cross-origin requests from React frontend
 $app->add(function ($request, $handler) {
     $response = $handler->handle($request);
+
+    // Allow localhost and local network access for mobile testing
+    $allowedOrigins = [
+        'http://localhost:5173',
+        'http://127.0.0.1:5173'
+    ];
+
+    // Get the client's origin
+    $origin = $request->getHeaderLine('Origin');
+
+    // Allow local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+    if (preg_match('/^http:\/\/(192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+):5173$/', $origin)) {
+        $allowedOrigins[] = $origin;
+    }
+
+    $corsOrigin = in_array($origin, $allowedOrigins) ? $origin : 'http://localhost:5173';
+
     return $response
-        ->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
+        ->withHeader('Access-Control-Allow-Origin', $corsOrigin)
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });

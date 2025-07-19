@@ -124,6 +124,26 @@ You can monitor the database startup progress with:
 docker-compose logs -f db
 ```
 
+### Mobile Device Testing
+
+The application includes automatic network detection for testing on mobile devices:
+
+```bash
+# 1. Start the services with Docker
+docker-compose up -d
+
+# 2. Find your computer's IP address
+ipconfig | findstr "IPv4"  # Windows
+# or
+ifconfig | grep "inet "    # macOS/Linux
+
+# 3. Access from mobile device (same Wi-Fi network)
+# Frontend: http://YOUR_IP_ADDRESS:5173
+# Example: http://192.168.0.105:5173
+```
+
+The frontend automatically detects when accessed via IP address and adjusts the API endpoints accordingly. No manual configuration needed!
+
 ### Local Development Setup
 
 #### Backend
