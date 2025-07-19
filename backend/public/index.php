@@ -5,7 +5,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 require __DIR__ . '/../vendor/autoload.php';
-require __DIR__ . '/../src/db-conn.php';
+require __DIR__ . '/../src/DbConn.php';
+require __DIR__ . '/../src/StaffValidator.php';
 
 $app = AppFactory::create();
 
@@ -49,16 +50,15 @@ $app->post('/staff', function (Request $request, Response $response) {
     }
 
     // Validate role
-    $validRoles = ['Cook', 'Server', 'Manager'];
-    if (!in_array($data['role'], $validRoles)) {
+    if (!StaffValidator::validateRole($data['role'])) {
         $response->getBody()->write(json_encode([
-            'error' => 'Invalid role. Must be one of: ' . implode(', ', $validRoles)
+            'error' => 'Invalid role. Must be one of: ' . implode(', ', StaffValidator::getValidRoles())
         ]));
         return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
     }
 
     // Validate phone format (306-555-1234)
-    if (!preg_match('/^\d{3}-\d{3}-\d{4}$/', $data['phone'])) {
+    if (!StaffValidator::validatePhoneNumber($data['phone'])) {
         $response->getBody()->write(json_encode([
             'error' => 'Invalid phone format. Must be in format 306-555-1234'
         ]));
