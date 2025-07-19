@@ -128,7 +128,7 @@ const StaffTable = () => {
     <Box sx={{ p: 2 }}>
       {/* Header with Add Button */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4">Staff Management</Typography>
+        <Typography variant="h4">Staff Manager</Typography>
         <Button 
           variant="contained" 
           color="primary"
