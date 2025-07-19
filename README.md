@@ -9,6 +9,7 @@ A full-stack web application for managing staff members, shifts, and assignments
 - **Staff Assignment**: Assign staff members to shifts with automatic role matching
 - **Data Validation**: Comprehensive validation for phone numbers, roles, and assignments
 - **Responsive UI**: Modern Material-UI interface with tabbed navigation
+- **Cross-Device Testing**: Automatic network detection for mobile device testing
 
 ## Technology Stack
 
@@ -48,7 +49,7 @@ staff-scheduler/
 │   │   │   ├── StaffList.jsx      # Staff management
 │   │   │   └── ShiftScheduler.jsx # Shift scheduling
 │   │   ├── api/
-│   │   │   └── axios.js           # HTTP client config
+│   │   │   └── axios.js           # HTTP client with auto-detection
 │   │   └── App.jsx                # Main application
 │   ├── package.json           # Node dependencies
 │   └── dockerfile             # Frontend container
@@ -203,12 +204,6 @@ DB_HOST=localhost
 DB_NAME=staff_scheduler
 DB_USER=devuser
 DB_PASS=devpass
-```
-
-### Frontend
-
-```
-VITE_API_BASE_URL=http://localhost:8000
 ```
 
 ## Contributing
