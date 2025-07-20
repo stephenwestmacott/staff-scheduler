@@ -7,9 +7,16 @@ A modern full-stack web application for managing staff schedules with role-based
 **Prerequisites:** Docker and Docker Compose must be installed and running.
 
 ```bash
-# Clone and start
+# Clone the repository
 git clone https://github.com/stephenwestmacott/staff-scheduler
+
+# Create environment file
+cp .env.example .env
+
+# Navigate to project directory
 cd staff-scheduler
+
+# Start all services
 docker-compose up -d --build
 
 # Access the application
@@ -29,7 +36,7 @@ Access from any device on your Wi-Fi network:
 
 ## Technology Stack
 
-**Backend:** PHP 8.4, Slim Framework 4, MySQL 8.0  
+**Backend:** PHP 8.3, Slim Framework 4, MySQL 8.0  
 **Frontend:** React 19, Vite, Material-UI  
 **Testing:** PHPUnit, Docker
 
