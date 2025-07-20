@@ -10,11 +10,11 @@ A modern full-stack web application for managing staff schedules with role-based
 # Clone the repository
 git clone https://github.com/stephenwestmacott/staff-scheduler
 
-# Create environment file
-cp .env.example .env
-
 # Navigate to project directory
 cd staff-scheduler
+
+# Create environment file
+cp .env.example .env
 
 # Start all services
 docker-compose up -d --build
