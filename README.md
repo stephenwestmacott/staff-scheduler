@@ -4,7 +4,8 @@ A modern full-stack web application for managing staff schedules with role-based
 
 ## Quick Start
 
-**Prerequisites:** Docker and Docker Compose must be installed and running.
+**Prerequisites:** Docker and Docker Compose must be **installed and running**.  
+📥 Download Docker Desktop: https://www.docker.com/products/docker-desktop/
 
 ```bash
 # Clone the repository
