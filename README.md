@@ -4,9 +4,11 @@ A modern full-stack web application for managing staff schedules with role-based
 
 ## Quick Start
 
+**Prerequisites:** Docker and Docker Compose must be installed and running.
+
 ```bash
 # Clone and start
-git clone https://github.com/stephenwestmacott/staff-scheduler.git
+git clone https://github.com/stephenwestmacott/staff-scheduler
 cd staff-scheduler
 docker-compose up -d --build
 
