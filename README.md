@@ -5,7 +5,7 @@ A modern full-stack web application for managing staff schedules with role-based
 ## Quick Start
 
 **Prerequisites:** Docker and Docker Compose must be **installed and running**.  
-📥 Download Docker Desktop: https://www.docker.com/products/docker-desktop/
+Download Docker Desktop: https://www.docker.com/products/docker-desktop/
 
 ```bash
 # Clone the repository
@@ -18,14 +18,16 @@ cd staff-scheduler
 cp .env.example .env
 
 # Start all services
-docker-compose up -d --build
+docker compose up -d --build
 
 # Access the application
 # Frontend: http://localhost:5173
 # Backend API: http://localhost:8000
 ```
 
-**⚠️ Note:** MySQL takes 1-2 minutes to initialize. The app will connect automatically once ready.
+**⚠️ Note:** First Docker build can take several minutes. The frontend will load before MySQL initializes and show "Failed to fetch data" errors. After MySQL has initialized and pre-populated data, refresh the page and staff/shift data will appear.
+
+**💡 Tip:** After the first build, use `docker compose down -v` to stop and `docker compose up -d` to restart (no rebuild needed).
 
 ## Mobile Testing
 
