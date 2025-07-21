@@ -53,11 +53,26 @@ Access from any device on your Wi-Fi network:
 
 ## Testing
 
+The application includes comprehensive unit tests for core business logic validation.
+
 ```bash
-# Run unit tests
+# Run all unit tests
 cd backend
 ./vendor/bin/phpunit tests/
+
+# Run specific test suites
+./vendor/bin/phpunit tests/unit/StaffServiceTest.php
+./vendor/bin/phpunit tests/unit/ShiftServiceTest.php
+./vendor/bin/phpunit tests/unit/AssignmentServiceTest.php
 ```
+
+**Test Coverage:**
+
+- **StaffService**: Name validation, role validation, phone format validation
+- **ShiftService**: Required field validation, creation scenarios
+- **AssignmentService**: Staff/shift validation, duplicate prevention logic
+
+All tests use mock repositories to isolate service logic and focus on validation behavior.
 
 ## API Endpoints
 

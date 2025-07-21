@@ -1,10 +1,7 @@
 <?php
 
 /**
- * StaffValidator Class
- * 
- * Provides validation utilities for staff-related data including phone numbers
- * and role validation. Used by the API endpoints to ensure data integrity.
+ * Staff data validation utilities
  * 
  * @author Stephen Westmacott
  * @version 1.0
@@ -12,19 +9,15 @@
 class StaffValidator
 {
     /**
-     * Valid roles for staff members
-     * These are the only accepted role values in the system
+     * Valid staff roles
      */
     const VALID_ROLES = ['Cook', 'Server', 'Manager'];
 
     /**
-     * Validates phone number format
+     * Validate phone number format (xxx-xxx-xxxx)
      * 
-     * Ensures phone number follows the pattern xxx-xxx-xxxx where x is a digit
-     * Example: 306-555-1234
-     * 
-     * @param string $phone The phone number to validate
-     * @return bool True if format is valid, false otherwise
+     * @param string $phone Phone number to validate
+     * @return bool True if valid format
      */
     public static function validatePhoneNumber($phone)
     {
@@ -32,13 +25,10 @@ class StaffValidator
     }
 
     /**
-     * Validates if a role is allowed in the system
+     * Validate if role is allowed
      * 
-     * Checks if the provided role matches one of the predefined valid roles.
-     * Case-sensitive comparison.
-     * 
-     * @param string $role The role to validate
-     * @return bool True if role is valid, false otherwise
+     * @param string $role Role to validate
+     * @return bool True if valid role
      */
     public static function validateRole($role)
     {
@@ -46,12 +36,9 @@ class StaffValidator
     }
 
     /**
-     * Get list of all valid roles
+     * Get all valid roles
      * 
-     * Returns an array of all acceptable role values for use in validation
-     * and form option generation.
-     * 
-     * @return array Array of valid role strings
+     * @return array Valid role strings
      */
     public static function getValidRoles()
     {

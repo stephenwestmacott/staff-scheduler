@@ -46,7 +46,7 @@ class AssignmentService
         if ($this->assignmentRepository->exists($staffId, $shiftId)) {
             return [
                 'success' => false,
-                'error' => 'Staff member is already assigned to this shift.'
+                'error' => 'Staff member is already assigned to this shift'
             ];
         }
 

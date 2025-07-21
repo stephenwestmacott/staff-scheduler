@@ -8,9 +8,7 @@ use PDOException;
 /**
  * Database Connection Factory
  * 
- * Provides database connection functionality for the Staff Scheduler application.
- * Uses PDO for secure database operations with proper error handling and configuration.
- * Supports environment variable configuration for different deployment environments.
+ * Creates PDO database connections with environment variable configuration.
  * 
  * @author Stephen Westmacott
  * @version 2.0
@@ -18,40 +16,30 @@ use PDOException;
 class ConnectionFactory
 {
     /**
-     * Creates and returns a PDO database connection
+     * Create a PDO database connection
      * 
-     * Creates a MySQL database connection using PDO with proper configuration for
-     * error handling, character encoding, and security. Uses environment variables
-     * for configuration with sensible defaults for development.
-     * 
-     * Environment Variables:
-     * - DB_HOST: Database host (default: localhost)
-     * - DB_NAME: Database name (default: staff_scheduler)  
-     * - DB_USER: Database username (default: devuser)
-     * - DB_PASS: Database password (default: devpass)
-     * 
-     * @return PDO Configured PDO database connection instance
-     * @throws PDOException If database connection fails
+     * @return PDO Configured database connection
+     * @throws PDOException If connection fails
      */
     public static function create(): PDO
     {
-        // Database configuration with environment variable fallbacks
+        // Get database config from environment variables
         $host = $_ENV['DB_HOST'] ?? 'localhost';
         $db   = $_ENV['DB_NAME'] ?? 'staff_scheduler';
         $user = $_ENV['DB_USER'] ?? 'devuser';
         $pass = $_ENV['DB_PASS'] ?? 'devpass';
 
-        // Build DSN (Data Source Name) with UTF-8 character set
+        // Build connection string
         $dsn  = "mysql:host=$host;dbname=$db;charset=utf8mb4";
 
         try {
-            // Create PDO connection with exception mode enabled for error handling
+            // Create PDO connection with error handling
             $pdo = new PDO($dsn, $user, $pass, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]);
             return $pdo;
         } catch (PDOException $e) {
-            // Terminate execution with error message if connection fails
+            // Exit on connection failure
             die("Database connection failed: " . $e->getMessage());
         }
     }

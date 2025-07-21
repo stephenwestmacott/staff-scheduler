@@ -3,8 +3,8 @@
 /**
  * Staff Scheduler API
  * 
- * A RESTful API for managing staff members, shifts, and assignments.
- * Built with Slim Framework 4 following SOLID principles and clean architecture.
+ * RESTful API for managing staff, shifts, and assignments.
+ * Built with Slim Framework 4.
  * 
  * @author Stephen Westmacott
  * @version 2.0

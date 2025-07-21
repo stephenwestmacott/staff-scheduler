@@ -17,16 +17,44 @@ use App\Repositories\AssignmentRepositoryInterface;
 use App\Database\ConnectionFactory;
 use PDO;
 
+/**
+ * Dependency Injection Container
+ * 
+ * Manages object creation and dependencies for the application.
+ * Supports service binding and singleton pattern.
+ * 
+ * @author Stephen Westmacott
+ * @version 1.0
+ */
 class Container
 {
+    /**
+     * @var array Service bindings (class name => factory function)
+     */
     private array $bindings = [];
+
+    /**
+     * @var array Singleton instances cache
+     */
     private array $instances = [];
 
+    /**
+     * Bind a service to the container
+     * 
+     * @param string $abstract The interface or class name
+     * @param callable $concrete Factory function that creates the service
+     */
     public function bind(string $abstract, callable $concrete): void
     {
         $this->bindings[$abstract] = $concrete;
     }
 
+    /**
+     * Register a singleton service (shared instance)
+     * 
+     * @param string $abstract The interface or class name
+     * @param callable $concrete Factory function that creates the service
+     */
     public function singleton(string $abstract, callable $concrete): void
     {
         $this->bind($abstract, function () use ($concrete, $abstract) {
@@ -37,6 +65,13 @@ class Container
         });
     }
 
+    /**
+     * Get a service from the container
+     * 
+     * @param string $abstract The service identifier to resolve
+     * @return mixed The service instance
+     * @throws \Exception If service not found
+     */
     public function get(string $abstract)
     {
         if (!isset($this->bindings[$abstract])) {
@@ -46,6 +81,9 @@ class Container
         return $this->bindings[$abstract]();
     }
 
+    /**
+     * Register all application services, repositories, and controllers
+     */
     public function registerServices(): void
     {
         // Register PDO connection as singleton
