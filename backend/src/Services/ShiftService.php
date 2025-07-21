@@ -64,15 +64,4 @@ class ShiftService
             ];
         }
     }
-
-    /**
-     * Get a shift by ID
-     *
-     * @param int $id
-     * @return array|null
-     */
-    public function getShiftById(int $id): ?array
-    {
-        return $this->shiftRepository->findById($id);
-    }
 }

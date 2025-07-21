@@ -74,15 +74,4 @@ class StaffService
             ];
         }
     }
-
-    /**
-     * Get a staff member by ID
-     *
-     * @param int $id
-     * @return array|null
-     */
-    public function getStaffById(int $id): ?array
-    {
-        return $this->staffRepository->findById($id);
-    }
 }
