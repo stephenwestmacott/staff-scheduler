@@ -3,6 +3,10 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography,
   Button, TextField, Box, Alert, CircularProgress, MenuItem, Grid, Card, CardContent
 } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import axios from '../api/axios';
 
 /**
@@ -36,9 +40,9 @@ const ShiftScheduler = () => {
   
   // Form data state
   const [shiftFormData, setShiftFormData] = useState({
-    day: '',
-    start_time: '',
-    end_time: '',
+    date: '',
+    start_time: null,
+    end_time: null,
     role_required: ''
   });
   
@@ -49,27 +53,6 @@ const ShiftScheduler = () => {
 
   // Constants for validation and form options
   const validRoles = ['Cook', 'Server', 'Manager'];
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-  /**
-   * Converts a day name (e.g., "Monday") to the next occurrence of that day in YYYY-MM-DD format
-   * This ensures API compatibility which expects date strings rather than day names
-   * 
-   * @param {string} dayName - Name of the day (Monday, Tuesday, etc.)
-   * @returns {string} Date in YYYY-MM-DD format
-   */
-  const convertDayToDate = (dayName) => {
-    const today = new Date();
-    const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    const targetDay = daysOfWeek.indexOf(dayName) + 1; // Convert to 1-7 (Monday = 1)
-    const actualTargetDay = targetDay === 7 ? 0 : targetDay; // Convert Sunday back to 0
-    
-    const daysUntilTarget = (actualTargetDay - currentDay + 7) % 7;
-    const targetDate = new Date(today);
-    targetDate.setDate(today.getDate() + daysUntilTarget);
-    
-    return targetDate.toISOString().split('T')[0]; // Return YYYY-MM-DD format
-  };
 
   /**
    * Fetches all data from the API (shifts, staff, assignments)
@@ -114,23 +97,20 @@ const ShiftScheduler = () => {
     
     // Transform form data for API compatibility
     const formattedData = {
-      ...shiftFormData,
-      day: convertDayToDate(shiftFormData.day), // Convert day name to date
-      role_required: shiftFormData.role_required.toLowerCase() // Convert to lowercase
+      day: shiftFormData.date,
+      start_time: shiftFormData.start_time ? dayjs(shiftFormData.start_time).format('HH:mm:ss') : '',
+      end_time: shiftFormData.end_time ? dayjs(shiftFormData.end_time).format('HH:mm:ss') : '',
+      role_required: shiftFormData.role_required.toLowerCase()
     };
-    
-    console.log('Sending shift data:', formattedData);
     
     axios.post('/shifts', formattedData)
       .then(() => {
         setSuccess('Shift created successfully!');
-        setShiftFormData({ day: '', start_time: '', end_time: '', role_required: '' });
+        setShiftFormData({ date: '', start_time: null, end_time: null, role_required: '' });
         setShowShiftForm(false);
-        fetchData(); // Refresh data
+        fetchData();
       })
       .catch(err => {
-        console.error('Shift creation error:', err);
-        console.error('Error response:', err.response);
         setError('Failed to create shift: ' + (err.response?.data?.error || err.message));
       })
       .finally(() => {
@@ -172,10 +152,11 @@ const ShiftScheduler = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Shift Scheduler
-      </Typography>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Shift Scheduler
+        </Typography>
 
       {error && <Alert severity="error" sx={{ mb: 2 }} onClose={clearMessages}>{error}</Alert>}
       {success && <Alert severity="success" sx={{ mb: 2 }} onClose={clearMessages}>{success}</Alert>}
@@ -201,39 +182,28 @@ const ShiftScheduler = () => {
               ) : (
                 <Box component="form" onSubmit={handleShiftSubmit}>
                   <TextField
-                    select
-                    label="Day"
-                    value={shiftFormData.day}
-                    onChange={(e) => setShiftFormData({...shiftFormData, day: e.target.value})}
+                    type="date"
+                    label="Date"
+                    value={shiftFormData.date}
+                    onChange={(e) => setShiftFormData({...shiftFormData, date: e.target.value})}
                     fullWidth
                     margin="normal"
                     required
-                  >
-                    {daysOfWeek.map((day) => (
-                      <MenuItem key={day} value={day}>{day}</MenuItem>
-                    ))}
-                  </TextField>
-                  
-                  <TextField
-                    type="time"
-                    label="Start Time"
-                    value={shiftFormData.start_time}
-                    onChange={(e) => setShiftFormData({...shiftFormData, start_time: e.target.value})}
-                    fullWidth
-                    margin="normal"
-                    InputLabelProps={{ shrink: true }}
-                    required
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
                   />
                   
-                  <TextField
-                    type="time"
+                  <TimePicker
+                    label="Start Time"
+                    value={shiftFormData.start_time}
+                    onChange={(newValue) => setShiftFormData({...shiftFormData, start_time: newValue})}
+                  />
+
+                  <TimePicker
                     label="End Time"
                     value={shiftFormData.end_time}
-                    onChange={(e) => setShiftFormData({...shiftFormData, end_time: e.target.value})}
-                    fullWidth
-                    margin="normal"
-                    InputLabelProps={{ shrink: true }}
-                    required
+                    onChange={(newValue) => setShiftFormData({...shiftFormData, end_time: newValue})}
                   />
                   
                   <TextField
@@ -398,7 +368,8 @@ const ShiftScheduler = () => {
         </Grid>
 
       </Grid>
-    </Box>
+      </Box>
+    </LocalizationProvider>
   );
 };
 
