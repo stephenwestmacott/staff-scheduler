@@ -4,7 +4,6 @@ import {
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
 import axios from '../api/axios';
 import { VALID_ROLES, INITIAL_SHIFT_FORM, INITIAL_ASSIGN_FORM } from '../constants';
 import AlertMessages from './AlertMessages';
@@ -33,12 +32,6 @@ const ShiftScheduler = () => {
   const [shiftFormData, setShiftFormData] = useState(INITIAL_SHIFT_FORM);
   const [assignFormData, setAssignFormData] = useState(INITIAL_ASSIGN_FORM);
 
-  /**
-   * Formats shift display text
-   */
-  const formatShiftDisplay = (shift) => {
-    return `${shift.day} ${shift.start_time}-${shift.end_time} (${shift.role_required})`;
-  };
 
   /**
    * Fetches all data from the API
@@ -68,27 +61,18 @@ const ShiftScheduler = () => {
     fetchData();
   }, []);
 
-  const updateShiftForm = (field, value) => {
-    setShiftFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const updateAssignForm = (field, value) => {
-    setAssignFormData(prev => ({ ...prev, [field]: value }));
-  };
-
   const clearMessages = () => {
     setError('');
     setSuccess('');
   };
 
-  const handleShiftSubmit = (e) => {
-    e.preventDefault();
+  const handleShiftSubmit = () => {
     setLoading(true);
     
     const formattedData = {
       day: shiftFormData.date,
-      start_time: shiftFormData.start_time ? dayjs(shiftFormData.start_time).format('HH:mm:ss') : '',
-      end_time: shiftFormData.end_time ? dayjs(shiftFormData.end_time).format('HH:mm:ss') : '',
+      start_time: shiftFormData.start_time ? shiftFormData.start_time + ':00' : '',
+      end_time: shiftFormData.end_time ? shiftFormData.end_time + ':00' : '',
       role_required: shiftFormData.role_required.toLowerCase()
     };
     
@@ -107,8 +91,7 @@ const ShiftScheduler = () => {
       });
   };
 
-  const handleAssignSubmit = (e) => {
-    e.preventDefault();
+  const handleAssignSubmit = () => {
     setLoading(true);
     
     axios.post('/assign', assignFormData)

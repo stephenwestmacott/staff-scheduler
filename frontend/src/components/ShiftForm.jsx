@@ -44,8 +44,8 @@ const ShiftForm = ({ formData, onFormChange, onSubmit, onCancel }) => {
         <TextField
           select
           label="Role"
-          value={formData.role}
-          onChange={(e) => updateForm('role', e.target.value)}
+          value={formData.role_required}
+          onChange={(e) => updateForm('role_required', e.target.value)}
           required
         >
           {VALID_ROLES.map((role) => (
