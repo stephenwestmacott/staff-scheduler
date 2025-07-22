@@ -110,20 +110,22 @@ All tests use mock repositories to isolate service logic and focus on validation
 
 ### With More Time, I'd Add:
 
-- Component testing (Jest/React Testing Library)
-- Custom hooks for API logic (useStaffData, etc.)
-- Client-side form validation (Formik or React Hook Form)
-- React error boundaries
-- JWT authentication and RBAC
-- Redis caching, pagination, and indexing for performance
-- WebSocket support for real-time updates
+- Component testing (Jest and React Testing Library)
+- Custom hooks for API logic (e.g., useStaffData)
+- Validation for shift dates and times (e.g., prevent end before start or past dates)
+- Duplicate check for staff entries
+- Edit/delete functionality for staff, shifts, and assignments
+- Basic authentication (e.g., login screen, token-based access control)
+- Multi-tenancy support for managing multiple restaurants or organizations
+- Persistent MySQL data (e.g., Docker volumes or external DB server)
+- Improved error handling and user feedback for edge cases
 
 ### Current Limitations & Design Decisions
 
-- No auth system: CORS filters origins but does not secure endpoints.
-- CORS config: Dynamically allows localhost and local network IPs for testing.
-- Error handling: Basic 400-level responses. No centralized logging or monitoring.
-- Data reset on rebuild: No persistent volume for MySQL by design.
+- No authentication: CORS filters origins but does not secure endpoints
+- CORS config: Dynamically allows localhost and local network IPs for testing
+- Error handling: Basic 400-level responses; no centralized logging or monitoring
+- Data reset on rebuild: No persistent volume for MySQL by design
 
 ### API Specification
 
