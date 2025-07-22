@@ -53,17 +53,16 @@ Access from any device on your Wi-Fi network:
 
 ## Testing
 
-The application includes comprehensive unit tests for core business logic validation.
+The application includes unit tests that validate core business logic and input validation.
 
 ```bash
-# Run all unit tests
-cd backend
-./vendor/bin/phpunit tests/
+# Run all unit tests from Docker
+docker compose exec backend ./vendor/bin/phpunit tests/
 
-# Run specific test suites
-./vendor/bin/phpunit tests/unit/StaffServiceTest.php
-./vendor/bin/phpunit tests/unit/ShiftServiceTest.php
-./vendor/bin/phpunit tests/unit/AssignmentServiceTest.php
+# Run specific test suites from Docker
+docker compose exec backend ./vendor/bin/phpunit tests/unit/StaffServiceTest.php
+docker compose exec backend ./vendor/bin/phpunit tests/unit/ShiftServiceTest.php
+docker compose exec backend ./vendor/bin/phpunit tests/unit/AssignmentServiceTest.php
 ```
 
 **Test Coverage:**
