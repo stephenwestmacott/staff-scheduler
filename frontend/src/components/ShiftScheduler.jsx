@@ -6,6 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from '../api/axios';
 import { VALID_ROLES, INITIAL_SHIFT_FORM, INITIAL_ASSIGN_FORM } from '../constants';
+import { useAlertMessages } from '../hooks/useAlertMessages';
 import AlertMessages from './AlertMessages';
 import ShiftsTable from './ShiftsTable';
 import AssignmentsTable from './AssignmentsTable';
@@ -21,16 +22,19 @@ const ROLES = VALID_ROLES;
  * Manages shift creation and staff assignment functionality.
  */
 const ShiftScheduler = () => {
-  // State management
+  // Data state management
   const [shifts, setShifts] = useState([]);
   const [staff, setStaff] = useState([]);
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  
+  // UI state management
   const [activeForm, setActiveForm] = useState('none');
   const [shiftFormData, setShiftFormData] = useState(INITIAL_SHIFT_FORM);
   const [assignFormData, setAssignFormData] = useState(INITIAL_ASSIGN_FORM);
+
+  // Alert messages using custom hook
+  const { error, success, clearMessages, showError, showSuccess } = useAlertMessages();
 
 
   /**
@@ -47,10 +51,10 @@ const ShiftScheduler = () => {
       setShifts(shiftsRes.data);
       setStaff(staffRes.data);
       setAssignments(assignmentsRes.data);
-      setError('');
+      showSuccess(''); // Clear any existing messages
     })
     .catch(err => {
-      setError('Failed to load data: ' + (err.response?.data?.error || err.message));
+      showError('Failed to load data: ' + (err.response?.data?.error || err.message));
     })
     .finally(() => {
       setLoading(false);
@@ -60,11 +64,6 @@ const ShiftScheduler = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const clearMessages = () => {
-    setError('');
-    setSuccess('');
-  };
 
   const handleShiftSubmit = () => {
     setLoading(true);
@@ -78,13 +77,13 @@ const ShiftScheduler = () => {
     
     axios.post('/shifts', formattedData)
       .then(() => {
-        setSuccess('Shift created successfully!');
+        showSuccess('Shift created successfully!');
         setShiftFormData(INITIAL_SHIFT_FORM);
         setActiveForm('none');
         fetchData();
       })
       .catch(err => {
-        setError('Failed to create shift: ' + (err.response?.data?.error || err.message));
+        showError('Failed to create shift: ' + (err.response?.data?.error || err.message));
       })
       .finally(() => {
         setLoading(false);
@@ -96,13 +95,13 @@ const ShiftScheduler = () => {
     
     axios.post('/assign', assignFormData)
       .then(() => {
-        setSuccess('Staff assigned to shift successfully!');
+        showSuccess('Staff assigned to shift successfully!');
         setAssignFormData(INITIAL_ASSIGN_FORM);
         setActiveForm('none');
         fetchData();
       })
       .catch(err => {
-        setError('Failed to assign staff: ' + (err.response?.data?.error || err.message));
+        showError('Failed to assign staff: ' + (err.response?.data?.error || err.message));
       })
       .finally(() => {
         setLoading(false);
