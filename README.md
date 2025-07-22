@@ -85,56 +85,46 @@ All tests use mock repositories to isolate service logic and focus on validation
 | GET    | `/assignments` | List assignments |
 | POST   | `/assign`      | Assign to shift  |
 
-## Development Approach & Architecture
+## Approach & Architecture
 
-### Backend Architecture Decisions
+### Backend
 
-**Framework Choice**: Selected Slim Framework for its lightweight nature and rapid API development capabilities, perfect for this assignment's scope.
+- **Framework Choice**: Selected Slim Framework for its lightweight nature and rapid API development capabilities, perfect for this assignment's scope.
 
-**Repository Pattern**: Implemented repository interfaces to abstract database operations, making the code testable and maintainable.
+- **Repository Pattern**: Implemented repository interfaces to abstract database operations, making the code testable and maintainable.
 
-**Service Layer**: Business logic and validation are centralized in service classes, keeping controllers thin and focused on HTTP concerns.
+- **Service Layer**: Business logic and validation are centralized in service classes, keeping controllers thin and focused on HTTP concerns.
 
-### Frontend Architecture Decisions
+### Frontend
 
-**Component Structure**: The application uses a modular component approach with clear separation of concerns:
+- **Component Structure**: The application uses a modular component approach with clear separation:
 
 - **Container Components** (`ShiftScheduler`, `StaffList`) manage state and business logic
-- **Presentational Components** (`ShiftForm`, `AlertMessages`) focus purely on UI rendering
+- **Presentational Components** (`ShiftForm`, `AlertMessages`) focus on UI rendering
 - **Custom Hooks** (`useAlertMessages`) extract reusable state logic from components
 
-**State Management**: Chose React's built-in `useState` and `useEffect` for simplicity, avoiding over-engineering with Redux/Context for this scope.
+- **State Management**: Chose React's built-in `useState` and `useEffect` for simplicity, avoiding over-engineering with Redux/Context for this scope.
 
-**API Layer**: Centralized axios configuration with automatic base URL detection for seamless mobile testing across network environments.
+- **API Layer**: Centralized axios configuration with automatic base URL detection for mobile testing across network environments.
 
-## Development Considerations & Trade-offs
+## Considerations & Trade-offs
 
-### What Would Be Next with More Time
+### With More Time, I'd Add:
 
-**Frontend Enhancements**:
-- Add Jest/React Testing Library for component testing
-- Extract `useStaffData`, `useShiftOperations` hooks for better separation of concerns
-- Client-side validation library (Formik, react-hook-form) for improved UX
-- React error boundaries for graceful error handling
-
-**Security & Authentication**:
-- JWT authentication with role-based access control
-- Multi-tenancy for organization/restaurant data isolation
-- Replace CORS allowlist with proper authentication middleware
-
-**Performance & Scalability**:
-- Redis caching for frequently accessed data
-- Database indexing and query optimization
-- WebSocket integration for real-time updates
-- Pagination for large datasets
+- Component testing (Jest/React Testing Library)
+- Custom hooks for API logic (useStaffData, etc.)
+- Client-side form validation (Formik or React Hook Form)
+- React error boundaries
+- JWT authentication and RBAC
+- Redis caching, pagination, and indexing for performance
+- WebSocket support for real-time updates
 
 ### Current Limitations & Design Decisions
 
-**CORS Configuration**: Uses targeted allowlist for localhost plus dynamic pattern matching for local network IPs to enable mobile testing. Production would use environment-specific allowlists only.
-
-**Authentication & Authorization**: No user authentication system. CORS provides origin filtering but isn't a security boundary since API endpoints can be accessed directly. Production would require JWT authentication and role-based access control.
-
-**Error Handling**: Basic error handling implemented. Production would include detailed logging and monitoring.
+- No auth system: CORS filters origins but does not secure endpoints.
+- CORS config: Dynamically allows localhost and local network IPs for testing.
+- Error handling: Basic 400-level responses. No centralized logging or monitoring.
+- Data reset on rebuild: No persistent volume for MySQL by design.
 
 ### API Specification
 
@@ -151,7 +141,7 @@ All tests use mock repositories to isolate service logic and focus on validation
       "validation": "Role: Cook|Server|Manager, phone: xxx-xxx-xxxx"
     },
     "GET /shifts": {
-      "description": "Retrieve all shifts", 
+      "description": "Retrieve all shifts",
       "response": "[{id, day, start_time, end_time, role_required}]"
     },
     "POST /shifts": {
