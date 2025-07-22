@@ -76,13 +76,100 @@ All tests use mock repositories to isolate service logic and focus on validation
 
 ## API Endpoints
 
-| Method | Endpoint      | Description     |
-| ------ | ------------- | --------------- |
-| GET    | `/api/staff`  | List all staff  |
-| POST   | `/api/staff`  | Create staff    |
-| GET    | `/api/shifts` | List shifts     |
-| POST   | `/api/shifts` | Create shift    |
-| POST   | `/api/assign` | Assign to shift |
+| Method | Endpoint       | Description      |
+| ------ | -------------- | ---------------- |
+| GET    | `/staff`       | List all staff   |
+| POST   | `/staff`       | Create staff     |
+| GET    | `/shifts`      | List shifts      |
+| POST   | `/shifts`      | Create shift     |
+| GET    | `/assignments` | List assignments |
+| POST   | `/assign`      | Assign to shift  |
+
+## Development Approach & Architecture
+
+### Backend Architecture Decisions
+
+**Framework Choice**: Selected Slim Framework for its lightweight nature and rapid API development capabilities, perfect for this assignment's scope.
+
+**Repository Pattern**: Implemented repository interfaces to abstract database operations, making the code testable and maintainable.
+
+**Service Layer**: Business logic and validation are centralized in service classes, keeping controllers thin and focused on HTTP concerns.
+
+### Frontend Architecture Decisions
+
+**Component Structure**: The application uses a modular component approach with clear separation of concerns:
+
+- **Container Components** (`ShiftScheduler`, `StaffList`) manage state and business logic
+- **Presentational Components** (`ShiftForm`, `AlertMessages`) focus purely on UI rendering
+- **Custom Hooks** (`useAlertMessages`) extract reusable state logic from components
+
+**State Management**: Chose React's built-in `useState` and `useEffect` for simplicity, avoiding over-engineering with Redux/Context for this scope.
+
+**API Layer**: Centralized axios configuration with automatic base URL detection for seamless mobile testing across network environments.
+
+## Development Considerations & Trade-offs
+
+### What Would Be Next with More Time
+
+**Frontend Enhancements**:
+- Add Jest/React Testing Library for component testing
+- Extract `useStaffData`, `useShiftOperations` hooks for better separation of concerns
+- Client-side validation library (Formik, react-hook-form) for improved UX
+- React error boundaries for graceful error handling
+
+**Security & Authentication**:
+- JWT authentication with role-based access control
+- Multi-tenancy for organization/restaurant data isolation
+- Replace CORS allowlist with proper authentication middleware
+
+**Performance & Scalability**:
+- Redis caching for frequently accessed data
+- Database indexing and query optimization
+- WebSocket integration for real-time updates
+- Pagination for large datasets
+
+### Current Limitations & Design Decisions
+
+**CORS Configuration**: Uses targeted allowlist for localhost plus dynamic pattern matching for local network IPs to enable mobile testing. Production would use environment-specific allowlists only.
+
+**Authentication & Authorization**: No user authentication system. CORS provides origin filtering but isn't a security boundary since API endpoints can be accessed directly. Production would require JWT authentication and role-based access control.
+
+**Error Handling**: Basic error handling implemented. Production would include detailed logging and monitoring.
+
+### API Specification
+
+```json
+{
+  "endpoints": {
+    "GET /staff": {
+      "description": "Retrieve all staff members",
+      "response": "[{id, name, role, phone}]"
+    },
+    "POST /staff": {
+      "description": "Create new staff member",
+      "body": "{name: string, role: enum, phone: string}",
+      "validation": "Role: Cook|Server|Manager, phone: xxx-xxx-xxxx"
+    },
+    "GET /shifts": {
+      "description": "Retrieve all shifts", 
+      "response": "[{id, day, start_time, end_time, role_required}]"
+    },
+    "POST /shifts": {
+      "description": "Create new shift",
+      "body": "{day: date, start_time: time, end_time: time, role_required: string}"
+    },
+    "GET /assignments": {
+      "description": "Retrieve staff-shift assignments with details",
+      "response": "[{assignment_id, staff_id, staff_name, staff_role, shift_id, day, start_time, end_time, role_required}]"
+    },
+    "POST /assign": {
+      "description": "Assign staff to shift",
+      "body": "{staff_id: int, shift_id: int}",
+      "validation": "Prevents duplicates, validates role matches"
+    }
+  }
+}
+```
 
 ## License
 
